@@ -1,8 +1,22 @@
+const helmet = require('helmet')
+const morgan = require('morgan')
+const logger = require('./logger')
 const Joi = require('joi')
 const express = require('express')
 const app = express()
 
+console.log('NODE_ENV', process.env.NODE_ENV)
+console.log('env', `${app.get('env')}`)
+
 app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+app.use(express.static('public'))
+app.use(helmet())
+if(app.get('env') === 'development'){
+    app.use(morgan('tiny'))
+    console.log('morgan tiny is enabled in development environnement')
+}
+app.use(logger)
 
 const courses = [
     {
@@ -48,32 +62,32 @@ app.delete('/api/courses/:id', (req, res) => {
     res.send(course)
 })
 
-app.post('/api/courses', (req, res) => {
-    const schema = {
-        title: Joi.string().min(3).required()
-    }
-    const results = Joi.object(req.body, schema)
-    if(results.error){
-        res.status(400).send(results.message)
-        return
-    }
-    const newCourse = {
-        id: courses.length + 1,
-        title: req.body.title
-    }
-    courses.push(newCourse)
-    res.send(newCourse)
-})
+// app.post('/api/courses', (req, res) => {
+//     const schema = {
+//         title: Joi.string().min(3).required()
+//     }
+//     const results = Joi.object(req.body, schema)
+//     if(results.error){
+//         res.status(400).send(results.message)
+//         return
+//     }
+//     const newCourse = {
+//         id: courses.length + 1,
+//         title: req.body.title
+//     }
+//     courses.push(newCourse)
+//     res.send(newCourse)
+// })
 
 app.post('/api/courses', (req, res) => {
-    const schema = {
-        title: Joi.string().min(3).required()
-    }
-    const results = Joi.object(req.body, schema)
-    if(results.error){
-        res.status(400).send(results.message)
-        return
-    }
+    // const schema = {
+    //     title: Joi.string().min(3).required()
+    // }
+    // const results = Joi.object(req.body, schema)
+    // if(results.error){
+    //     res.status(400).send(results.message)
+    //     return
+    // }
     const newCourse = {
         id: courses.length + 1,
         title: req.body.title
